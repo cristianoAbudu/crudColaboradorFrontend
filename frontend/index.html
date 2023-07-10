@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulário de Registro</title>
+</head>
+<body>
+    <h2>Formulário de Registro</h2>
+    <form id="registerForm">
+        <div>
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Salvar</button>
+    </form>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var name = document.getElementById("name").value;
+            var password = document.getElementById("password").value;
+
+            var data = {
+                nome: name,
+                senha: password
+            };
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://localhost:8080/", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log("Dados enviados com sucesso!");
+                    // Faça algo com a resposta, se necessário
+                }
+            };
+
+            xhr.send(JSON.stringify(data));
+        });
+    </script>
+</body>
+</html>

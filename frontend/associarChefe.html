@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Associação de Chefes e Subordinados</title>
+</head>
+<body>
+    <h2>Associação de Chefes e Subordinados</h2>
+
+    <label for="chefeCombo">Chefe:</label>
+    <select id="chefeCombo"></select>
+
+    <br><br>
+
+    <label for="subordinadoCombo">Subordinado:</label>
+    <select id="subordinadoCombo"></select>
+
+    <br><br>
+
+    <button id="salvarBtn">Salvar</button>
+
+    <script>
+        // Função para preencher o combo com base nos dados retornados do endpoint
+        function preencherCombo(combo, dados) {
+            combo.innerHTML = "";
+
+            dados.forEach(function (item) {
+                var option = document.createElement("option");
+                option.value = item.id;
+                option.text = item.nome || "";
+                combo.appendChild(option);
+            });
+        }
+
+        // Função para fazer a requisição GET e preencher os combos
+        function carregarDados() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:8080/", true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var dados = JSON.parse(xhr.responseText);
+
+                    var chefeCombo = document.getElementById("chefeCombo");
+                    var subordinadoCombo = document.getElementById("subordinadoCombo");
+
+                    preencherCombo(chefeCombo, dados);
+                    preencherCombo(subordinadoCombo, dados);
+                }
+            };
+
+            xhr.send();
+        }
+
+        // Função para enviar os dados selecionados para o endpoint
+        function salvarAssociacao() {
+            var chefeCombo = document.getElementById("chefeCombo");
+            var subordinadoCombo = document.getElementById("subordinadoCombo");
+
+            var idChefe = chefeCombo.value;
+            var idSubordinado = subordinadoCombo.value;
+
+            var data = {
+                idChefe: idChefe,
+                idSubordinado: idSubordinado
+            };
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://localhost:8080/associaChefe", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log("Associação salva com sucesso!");
+                    // Faça algo com a resposta, se necessário
+                }
+            };
+
+            xhr.send(JSON.stringify(data));
+        }
+
+        // Carregar os dados e definir o evento de clique do botão "Salvar"
+        document.getElementById("salvarBtn").addEventListener("click", salvarAssociacao);
+        carregarDados();
+    </script>
+</body>
+</html>
